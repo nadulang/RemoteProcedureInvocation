@@ -1,10 +1,9 @@
 ﻿using MediatR;
-using UserService.Application.Models.Query;
-using UserService.Domain.Entities;
+using UserService.Application.UseCases.Users.Request;
 
 namespace UserService.Application.UseCases.Users.Command.DeleteUser
 {
-    public class DeleteUserCommand : IRequest<BaseDto<Users_>>
+    public class DeleteUserCommand : IRequest<UserDto>
     {
         public int Id { get; set; }
 

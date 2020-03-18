@@ -7,7 +7,7 @@ using NotificationService.Application.UseCases.Notifications.Command.CreateAll;
 using NotificationService.Application.UseCases.Notifications.Command.DeleteAll;
 using NotificationService.Application.UseCases.Notifications.Command.UpdateNotificationsMultipleTargets;
 using NotificationService.Application.UseCases.Notifications.Queries.GetAll;
-using NotificationService.Application.UseCases.Notifications.Queries.GetNotification;
+using NotificationService.Application.UseCases.Notifications.Queries.GetAllById;
 using NotificationService.Domain.Entities;
 
 namespace NotificationService.Presenter.Controller
@@ -41,12 +41,11 @@ namespace NotificationService.Presenter.Controller
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BaseDto<Notifications_>>> Get(int id)
+        public async Task<ActionResult<BaseDto<Notifications_>>> Get(int id, string include)
         {
 
-            var command = new GetNotificationQuery(id);
-            var result = await _mediatr.Send(command);
-            return result != null ? (ActionResult)Ok(new { Message = "success", data = result }) : NotFound(new { Message = "not found" });
+            var Include = include ?? "None";
+            return Ok(await _mediatr.Send(new GetAllByIdQuery() { id = id, include = Include }));
 
         }
 

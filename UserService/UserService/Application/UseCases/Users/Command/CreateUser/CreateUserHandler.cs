@@ -1,29 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MediatR;
 using MimeKit;
+using Newtonsoft.Json;
 using UserService.Application.Models.Query;
+using UserService.Application.UseCases.Users.Request;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Command.CreateUser
 {
-    public class CreateUserHandler : IRequestHandler<BaseRequest<Users_>, BaseDto<Users_>>
+    public class CreateUserHandler : IRequestHandler<CreateUserCommand, UserDto>
     {
         private readonly UsersContext _context;
+        private static readonly HttpClient client = new HttpClient();
 
         public CreateUserHandler(UsersContext context)
         {
             _context = context;
         }
 
-        public async Task<BaseDto<Users_>> Handle(BaseRequest<Users_> request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var input = request.data.attributes;
+            var input = request.Data.Attributes;
 
-            var user = new Domain.Entities.Users_
+            var user = new Users_()
             {
                 name = input.name,
                 username = input.username,
@@ -33,34 +40,36 @@ namespace UserService.Application.UseCases.Users.Command.CreateUser
             };
 
             _context.UsersData.Add(user);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
 
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Cantik-Cantik Ngiau", "cacangie45@gmail.com"));
-            message.To.Add(new MailboxAddress("Cantik-Cantik Ngiau", "cacangie45@gmail.com"));
-            message.Subject = "You have created a user";
+            var user1 = _context.UsersData.First(x => x.username == request.Data.Attributes.username);
+            var target = new Target() { Id = user.id, Email_destination = user.email };
 
-            message.Body = new TextPart("plain")
+            var command = new NotifInput()
             {
-                Text = @"Welcome! If you receiving this email that means you have created a user. If you didn't do this, please contact the customer service immediately."
+                Title = "hello",
+                Message = "this is message body",
+                Type = "email",
+                From = 123456,
+                Targets = new List<Target>() { target }
             };
 
-            using (var client = new SmtpClient())
+            var attributes = new Attribute<NotifInput>()
             {
+                Attributes = command
+            };
 
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            var httpContent = new CommandDTO<NotifInput>()
+            {
+                Data = attributes
+            };
 
-                client.Connect("smtp.mailtrap.io", 2525, false);
+            var jsonObject = JsonConvert.SerializeObject(httpContent);
+            var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
 
+            await client.PostAsync("http://localhost:1800/api/notification", content);
 
-                client.Authenticate("84b015139889ab", "a7eda17f7b7703");
-
-                client.Send(message);
-                client.Disconnect(true);
-                Console.WriteLine("E-mail Sent");
-            }
-
-            return new BaseDto<Users_>
+            return new UserDto
             {
                 message = "Success add a user data",
                 success = true,

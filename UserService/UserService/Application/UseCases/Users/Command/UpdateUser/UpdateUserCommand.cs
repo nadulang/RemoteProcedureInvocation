@@ -1,15 +1,12 @@
-﻿using UserService.Application.Models.Query;
+﻿using MediatR;
+using UserService.Application.Models.Query;
+using UserService.Application.UseCases.Users.Request;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.UseCases.Users.Command.UpdateUser
 {
-    public class UpdateUserCommand : BaseRequest<Users_>
+    public class UpdateUserCommand : CommandDTO<Users_>, IRequest<UserDto>
     {
-        public int Id { get; set; }
-
-        public UpdateUserCommand(int id)
-        {
-            Id = id;
-        }
+        
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using UserService.Application.Models.Query;
+using UserService.Application.UseCases.Users.Request;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Command.DeleteUser
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, BaseDto<Users_>>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, UserDto>>
     {
         private readonly UsersContext _context;
 
@@ -16,7 +16,7 @@ namespace UserService.Application.UseCases.Users.Command.DeleteUser
             _context = context;
         }
 
-        public async Task<BaseDto<Users_>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var delete = await _context.UsersData.FindAsync(request.Id);
 
@@ -30,7 +30,7 @@ namespace UserService.Application.UseCases.Users.Command.DeleteUser
                 _context.UsersData.Remove(delete);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new BaseDto<Users_>
+                return new UserDto
                 {
                     success = true,
                     message = "Successfully deleted a user"

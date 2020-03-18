@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using UserService.Application.Models.Query;
+using UserService.Application.UseCases.Users.Request;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Command.UpdateUser
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, BaseDto<Users_>>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserDto>
     {
         private readonly UsersContext _context;
 
@@ -16,26 +16,25 @@ namespace UserService.Application.UseCases.Users.Command.UpdateUser
             _context = context;
         }
 
-        public async Task<BaseDto<Users_>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
 
-            var user = _context.UsersData.Find(request.Id);
+            var user = _context.UsersData.Find(request.Data.Attributes.id);
 
            
-                user.name = request.data.attributes.name;
-                user.username = request.data.attributes.username;
-                user.email = request.data.attributes.email;
-                user.password = request.data.attributes.password;
-                user.address = request.data.attributes.address;
+                user.name = request.Data.Attributes.name;
+                user.username = request.Data.Attributes.username;
+                user.email = request.Data.Attributes.email;
+                user.password = request.Data.Attributes.password;
+                user.address = request.Data.Attributes.address;
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new BaseDto<Users_>
+                return new UserDto
                 {
                     success = true,
                     message = "Data is successfully updated"
                 };
-            
         }
     }
 }
