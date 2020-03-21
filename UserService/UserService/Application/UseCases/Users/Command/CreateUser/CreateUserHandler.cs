@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
 using MediatR;
-using MimeKit;
 using Newtonsoft.Json;
 using UserService.Application.Models.Query;
 using UserService.Application.UseCases.Users.Request;
@@ -47,8 +44,8 @@ namespace UserService.Application.UseCases.Users.Command.CreateUser
 
             var command = new NotifInput()
             {
-                Title = "hello",
-                Message = "this is message body",
+                Title = "rabbit - test",
+                Message = "this is only testing",
                 Type = "email",
                 From = 123456,
                 Targets = new List<Target>() { target }
@@ -67,13 +64,12 @@ namespace UserService.Application.UseCases.Users.Command.CreateUser
             var jsonObject = JsonConvert.SerializeObject(httpContent);
             var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
 
-            await client.PostAsync("http://localhost:1800/api/notification", content);
+            await client.PostAsync("http://localhost:5800/api/notification", content);
 
             return new UserDto
             {
                 message = "Success add a user data",
-                success = true,
-                data = input
+                success = true
             };
         }
     }

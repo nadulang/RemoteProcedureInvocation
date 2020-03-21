@@ -7,7 +7,7 @@ using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Command.DeleteUser
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, UserDto>>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, UserDto>
     {
         private readonly UsersContext _context;
 

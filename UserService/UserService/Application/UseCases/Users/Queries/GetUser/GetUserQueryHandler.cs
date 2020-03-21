@@ -7,7 +7,7 @@ using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Queries.GetUser
 {
-    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, BaseDto<Users_>>
+    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, GetUserDto>
     {
         private readonly UsersContext _context;
 
@@ -16,7 +16,7 @@ namespace UserService.Application.UseCases.Users.Queries.GetUser
             _context = context;
         }
 
-        public async Task<BaseDto<Users_>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        public async Task<GetUserDto> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
             var result = await _context.UsersData.FindAsync(request.Id);
             if (result == null)
@@ -25,11 +25,11 @@ namespace UserService.Application.UseCases.Users.Queries.GetUser
             }
             else
             {
-                return new BaseDto<Users_>
+                return new GetUserDto
                 {
                     success = true,
                     message = "User succesfully retrieved",
-                    data = result
+                    Data = result
                 };
             }
         }

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using MediatR;
-using NotificationService.Application.Models.Query;
-using NotificationService.Domain.Entities;
+﻿using MediatR;
 
 namespace NotificationService.Application.UseCases.Notifications.Queries.GetNotifications
 {
-    public class GetNotificationsQuery : IRequest<BaseDto<List<Notifications_>>>
+    public class GetNotificationsQuery : IRequest<GetNotificationsDto>
     {
-        
+       
     }
 }

@@ -1,16 +1,14 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
-using MediatR;
-using System.Threading.Tasks;
 using System.Threading;
-using NotificationService.Application.Models.Query;
-using NotificationService.Domain.Entities;
-using NotificationService.Infrastructure.Persistences;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NotificationService.Application.UseCases.Notifications.Request;
+using NotificationService.Infrastructure.Persistences;
 
 namespace NotificationService.Application.UseCases.Notifications.Queries.GetNotifications
 {
-    public class GetNotificationsQueryHandler : IRequestHandler<GetNotificationsQuery, BaseDto<List<Notifications_>>>
+    public class GetNotificationsQueryHandler : IRequestHandler<GetNotificationsQuery, GetNotificationsDto>
     {
         private readonly NotificationContext _context;
 
@@ -19,20 +17,18 @@ namespace NotificationService.Application.UseCases.Notifications.Queries.GetNoti
             _context = context;
         }
 
-        public async Task<BaseDto<List<Notifications_>>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
+        public async Task<GetNotificationsDto> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
         {
             var data = await _context.Notifications.ToListAsync();
 
-            var result = data.Select(e => new Notifications_
+            var result = data.Select(e => new Notifications2_
             {
                 id = e.id,
                 title = e.title,
                 message = e.message,
-                created_at = e.created_at,
-                updated_at = e.updated_at
             });
 
-            return new BaseDto<List<Notifications_>>
+            return new GetNotificationsDto
             {
                 message = "Success retrieving data",
                 success = true,

@@ -10,7 +10,7 @@ using UserService.Infrastructure.Persistences;
 
 namespace UserService.Application.UseCases.Users.Queries.GetUsers
 {
-    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, BaseDto<List<Users_>>>
+    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, GetUsersDto>
     {
         private readonly UsersContext _context;
 
@@ -19,7 +19,7 @@ namespace UserService.Application.UseCases.Users.Queries.GetUsers
             _context = context;
         }
 
-        public async Task<BaseDto<List<Users_>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<GetUsersDto> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
             var data = await _context.UsersData.ToListAsync();
 
@@ -33,7 +33,7 @@ namespace UserService.Application.UseCases.Users.Queries.GetUsers
                 address = e.address
             });
 
-            return new BaseDto<List<Users_>>
+            return new GetUsersDto
             {
                 message = "Success retrieving data",
                 success = true,
